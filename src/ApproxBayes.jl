@@ -6,6 +6,7 @@ using StatsBase
 using RecipesBase
 using Printf
 using Distances
+using Discretizers
 using DelimitedFiles
 using Random
 using Statistics
