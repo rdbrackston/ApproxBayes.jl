@@ -32,7 +32,6 @@ jumprate4(u,p,t) = u[2]*p[3]
 affect4!(integrator) = (integrator.u[2] -= 1.; integrator.u[3] += 1.)
 jump4 = ConstantRateJump(jumprate4,affect4!)
 
-
 #simulations function for ABC. return distance between distributions and solution
 function simRNA(params, constants, targetdata)
 
@@ -57,7 +56,7 @@ cutOff = 8.0*mean(rnaData)
 filter!(x -> x<cutOff, rnaData);
 
 #define ABC setup type
-setup = ABCRejection(simRNA, 3, 0.1,
+setup = ABCRejection(simRNA, 3, 0.2,
     Prior([Uniform(50.0,500.0), Uniform(1.0,20.0), Uniform(10.0,200.0)]);
     maxiterations = 10^6)
 
