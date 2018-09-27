@@ -32,6 +32,33 @@ function ksdist(x::AbstractVector{T}, y::AbstractVector{S}) where {T <: Real, S 
   return δ
 end
 
+function hellingerdist(x::AbstractVector{T}, y::AbstractVector{T}) where { T<:AbstractFloat }
+
+  nbins1 = Discretizers.get_nbins(:sqrt, x)
+  lo1, hi1 = extrema(x)
+  delta = (hi1 - lo1) / nbins1
+
+  lo2, hi2 = extrema(y)
+  difflo = lo1 - lo2
+  diffhi = hi2 - hi1
+
+  addbins_lo = max(ceil(Int, difflo / delta), 0)
+  addbins_hi = max(ceil(Int, diffhi / delta), 0)
+
+  lo = lo1 - addbins_lo*delta
+  hi = hi1 + addbins_hi*delta
+  nbins = nbins1 + addbins_lo + addbins_hi
+
+  edges =  convert(Vector{T}, collect(range(lo, stop=hi, length=nbins+1)))
+  discretizer = Discretizers.LinearDiscretizer(edges)
+
+  tally1 = Discretizers.get_discretization_counts(discretizer, x)
+  tally2 = Discretizers.get_discretization_counts(discretizer, y)
+
+  return Distances.hellinger(tally1, tally2)
+end
+
+
 function setupSMCparticles(ABCrejresults::ABCrejectionresults, ABCsetup)
   #convert to SMC type after using ABC rejection
   weights = ones(ABCsetup.nparticles)./ABCsetup.nparticles
